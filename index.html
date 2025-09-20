@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zjisti, jestli ses narodila pro vlastní podnikání 🚀</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 30%, #FF8C69 70%, #FFA07A 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FF69B4, #FF8C69);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .intro {
+            font-size: 1.1em;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+
+        .quiz-content {
+            padding: 40px 30px;
+        }
+
+        .question {
+            background: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #FF69B4;
+        }
+
+        .question h3 {
+            color: #FF1493;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .answer {
+            background: linear-gradient(135deg, #FFF0F5, #FFE4E1);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+            line-height: 1.5;
+        }
+
+        .answer:hover {
+            background: linear-gradient(135deg, #FFCCCB, #FFB6C1);
+            border-color: #FF69B4;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.2);
+        }
+
+        .answer.selected {
+            background: linear-gradient(135deg, #FF69B4, #FF8C69);
+            color: white;
+            border-color: #FF1493;
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #FF1493, #FF69B4);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255, 20, 147, 0.3);
+            margin: 30px auto;
+            display: block;
+            font-weight: 600;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(255, 20, 147, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+            background: white;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .result h2 {
+            color: #FF1493;
+            font-size: 2em;
+            margin-bottom: 25px;
+        }
+
+        .result-text {
+            font-size: 1.2em;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .result-text a {
+            color: #FF1493;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .result-text a:hover {
+            text-decoration: underline;
+        }
+
+        .progress-bar {
+            background: #f0f0f0;
+            height: 8px;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #FF69B4, #FF8C69);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .question-counter {
+            text-align: center;
+            color: #FF1493;
+            font-size: 1em;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .quiz-content {
+                padding: 30px 20px;
+            }
+            
+            .question {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Zjisti, jestli ses narodila pro vlastní podnikání 🚀</h1>
+            <div class="intro">
+                Vyplň 8 jednoduchých otázek a zjisti, jestli máš předpoklady začít podnikat online.<br><br>
+                Zabere ti to jen 3 minuty. Vyber vždy jen jednu možnost.<br><br>
+                Na konci dostaneš výsledek + tip na první krok zdarma.
+            </div>
+        </div>
+
+        <div class="quiz-content">
+            <div class="question-counter">
+                <span id="current-question">1</span> / 8
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+
+            <div id="quiz-questions">
+                <div class="question" data-question="1">
+                    <h3>Jak reaguješ, když se něco nepovede?</h3>
+                    <div class="answers">
+                        <div class="answer" data-points="3">Beru to jako zkušenost a jedu dál.</div>
+                        <div class="answer" data-points="1">Hodně mě to rozhodí a radši to vzdám.</div>
+                        <div class="answer" data-points="2">Zkusím to znovu jinak.</div>
+                    </div>
+                </div>
+
+                <div class="question" data-question="2">
+                    <h3>Co tě víc motivuje?</h3>
+                    <div class="answers">
+                        <div class="answer" data-points="2">Svoboda, i když je tam riziko.</div>
+                        <div class="answer" data-points="3">Dělat, co mě baví, a mít vliv na svůj život.</div>
+                        <div class="answer" data-points="1">Jistota a stabilita.</div>
+                    </div>
+                </div>
+
+                <div class="question" data-question="3">
+                    <h3>Když máš nový nápad, co děláš?</h3>
+                    <div class="answers">
+                        <div class="answer" data-points="1">Přemýšlím, co by na to řeklo okolí.</div>
+                        <div class="answer" data-points="3">Nadchnu se a hledám cestu, jak to zkusit.</div>
+                        <div class="answer" data-points="2">Zapíšu si to, ale váhám.</div>
+                    </div>
+                </div>
+
+                <div class="question" data-question="4">
+                    <h3>Jaký je tvůj vztah k technologiím a učení se novým věcem?</h3>
+                    <div class="answers">
+                        <div class="answer" data-points="3">Ráda se učím, baví mě nové nástroje.</div>
+                        <div class="answer" data-points="2">Potřebuju jasný návod krok za krokem.</div>
+                        <div class="answer" data-points="1">Moc tomu nerozumím a ani nechci.</div>
+                    </div>
+                </div>
+
+                <div class="question" data-question="5">
+                    <h3>Jak vypadá tvůj ideální pracovní den?</h3>
+                    <div class="answers">
+                        <div class="answer" data-points="2">Flexibilita – čas na práci i rodinu.</div>
+                        <div class="answer" data-points="1">Stabilní rutina 8–16.</div>
+                        <div class="answer" data-points="3">Plná svoboda – pracuju odkudkoliv a kdy chci.</div>
+                    </div>
+                </div>
+
+                <div class="question" data-question="6">
+                    <h3>Jak moc toužíš po změně ve svém životě?</h3>
+                    <div class="answers">
+                        <div class="answer" data-points="3">Každý den, už chci začít!</div>
+                        <div class="answer" data-points="1">Občas o tom přemýšlím.</div>
+                        <div class="answer" data-points="2">Hodně často, hledám cestu.</div>
+                    </div>
+                </div>
+
+                <div class="question" data-question="7">
+                    <h3>Kolik času týdně bys dokázala věnovat budování něčeho vlastního?</h3>
+                    <div class="answers">
+                        <div class="answer" data-points="1">Skoro žádný.</div>
+                        <div class="answer" data-points="3">2–3 hodiny denně.</div>
+                        <div class="answer" data-points="2">2–4 hodiny týdně.</div>
+                    </div>
+                </div>
+
+                <div class="question" data-question="8">
+                    <h3>Jak reaguješ, když ti někdo říká, že to nezvládneš?</h3>
+                    <div class="answers">
+                        <div class="answer" data-points="2">Poslechnu si to, ale zůstanu otevřená.</div>
+                        <div class="answer" data-points="3">Beru to jako výzvu a motivaci.</div>
+                        <div class="answer" data-points="1">Rychle se nechám odradit.</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="submit-btn" id="submit-btn" disabled>Zobrazit výsledek</button>
+
+            <div class="result" id="result">
+                <h2 id="result-title"></h2>
+                <div class="result-text" id="result-text"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedAnswers = {};
+        let currentQuestion = 1;
+        const totalQuestions = 8;
+
+        // Skryjeme všechny otázky kromě první
+        const questions = document.querySelectorAll('.question');
+        questions.forEach((q, index) => {
+            if (index > 0) q.style.display = 'none';
+        });
+
+        // Event listener pro odpovědi
+        document.querySelectorAll('.answer').forEach(answer => {
+            answer.addEventListener('click', function() {
+                const questionNum = this.closest('.question').dataset.question;
+                const points = parseInt(this.dataset.points);
+                
+                // Zrušíme předchozí výběr v této otázce
+                this.closest('.answers').querySelectorAll('.answer').forEach(a => {
+                    a.classList.remove('selected');
+                });
+                
+                // Označíme vybranou odpověď
+                this.classList.add('selected');
+                
+                // Uložíme odpověď
+                selectedAnswers[questionNum] = points;
+                
+                // Po chvilce přejdeme na další otázku
+                setTimeout(() => {
+                    if (currentQuestion < totalQuestions) {
+                        // Skryjeme aktuální otázku
+                        document.querySelector(`[data-question="${currentQuestion}"]`).style.display = 'none';
+                        
+                        // Zobrazíme další otázku
+                        currentQuestion++;
+                        document.querySelector(`[data-question="${currentQuestion}"]`).style.display = 'block';
+                        
+                        // Aktualizujeme počítadlo a progress bar
+                        document.getElementById('current-question').textContent = currentQuestion;
+                        document.getElementById('progress').style.width = (currentQuestion / totalQuestions) * 100 + '%';
+                    }
+                    
+                    // Pokud je to poslední otázka, povolíme tlačítko
+                    if (Object.keys(selectedAnswers).length === totalQuestions) {
+                        document.getElementById('submit-btn').disabled = false;
+                        document.getElementById('progress').style.width = '100%';
+                    }
+                }, 500);
+            });
+        });
+
+        // Event listener pro zobrazení výsledku
+        document.getElementById('submit-btn').addEventListener('click', function() {
+            const totalScore = Object.values(selectedAnswers).reduce((sum, points) => sum + points, 0);
+            
+            // Skryjeme kvíz
+            document.getElementById('quiz-questions').style.display = 'none';
+            this.style.display = 'none';
+            document.querySelector('.question-counter').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'none';
+            
+            // Zobrazíme výsledek
+            const resultDiv = document.getElementById('result');
+            const resultTitle = document.getElementById('result-title');
+            const resultText = document.getElementById('result-text');
+            
+            if (totalScore >= 8 && totalScore <= 13) {
+                resultTitle.textContent = 'Podnikání zatím není tvoje cesta ❤️';
+                resultText.innerHTML = 'Potřebuješ spíš jistotu a stabilitu, což je úplně v pořádku! Ale jestli tě to přece jen láká, doporučuju ti zdarma trénink, kde ti ukážu, jak začít úplně od nuly 👉 <a href="https://moje.flixy.cz/uspesna_podnikatelka/p/z-skej-p-ru-ku-zcela-zdarma--vkm6kkisj" target="_blank">Začni zde zdarma</a>';
+            } else if (totalScore >= 14 && totalScore <= 19) {
+                resultTitle.textContent = 'Máš dobré předpoklady a potenciál! 💪';
+                resultText.innerHTML = 'Potřebuješ jasný plán krok za krokem, abys udržela motivaci. Tady máš trénink zdarma 👉 <a href="https://moje.flixy.cz/uspesna_podnikatelka/p/z-skej-p-ru-ku-zcela-zdarma--vkm6kkisj" target="_blank">Začni zde zdarma</a>';
+            } else if (totalScore >= 20 && totalScore <= 24) {
+                resultTitle.textContent = 'Gratuluju! Jsi pro podnikání přímo stvořená! 🎉🚀';
+                resultText.innerHTML = 'Máš mindset, odhodlání i touhu něco změnit. Teď už jen začít – tady je trénink zdarma, který ti ukáže první kroky 👉 <a href="https://moje.flixy.cz/uspesna_podnikatelka/p/z-skej-p-ru-ku-zcela-zdarma--vkm6kkisj" target="_blank">Začni zde zdarma</a>';
+            }
+            
+            resultDiv.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
